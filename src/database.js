@@ -1,6 +1,8 @@
 import fs from "node:fs/promises";
 import { randomUUID } from "node:crypto";
 
+import { formatDate } from "./utils/format-data.js";
+
 const databasePath = new URL("../db.json", import.meta.url);
 
 export class Database {
@@ -61,24 +63,39 @@ export class Database {
       return false;
     }
 
-    const newDataTask = {
-      title,
-      description,
-      completed_at,
-      created_at,
-      updated_at,
+    const taskIndexToBeUptaded = this.#database.findIndex(
+      (task) => task.id === taskID
+    );
+
+    const actualDataTask = this.#database[taskIndexToBeUptaded];
+    const updatedDataTask = {
+      ...actualDataTask,
+      ...(title !== undefined && { title }),
+      ...(description !== undefined && { description }),
+      ...(completed_at !== undefined && { completed_at }),
+      ...(created_at !== undefined && { created_at }),
+      ...(updated_at !== undefined && { updated_at }),
     };
 
-    const taskIndexToBeUptaded = this.#database.findIndex((task, index) => {
-      if (task.id === taskID) {
-        return index;
-      }
-    });
+    this.#database[taskIndexToBeUptaded] = updatedDataTask;
+    this.#persist();
+
+    return true;
+  }
+
+  complete(taskID) {
+    if (!taskID) {
+      return false;
+    }
+
+    const taskIndexToBeUptaded = this.#database.findIndex(
+      (task) => task.id === taskID
+    );
 
     const actualDataTask = this.#database[taskIndexToBeUptaded];
     this.#database[taskIndexToBeUptaded] = {
       ...actualDataTask,
-      ...newDataTask,
+      completed_at: formatDate(new Date()),
     };
 
     this.#persist();
