@@ -47,9 +47,13 @@ export class Database {
 
   insert({ title, description, completed_at, created_at, updated_at }) {
     const taskID = randomUUID();
-    const task = { title, description, completed_at, created_at, updated_at };
-
-    task = { ...task, id: taskID, created_at: formatDate(new Date()) };
+    const task = {
+      title,
+      description,
+      completed_at,
+      created_at: formatDate(new Date()),
+      updated_at,
+    };
 
     this.#database.push(task);
 
