@@ -27,13 +27,13 @@ export const routes = [
   },
 
   {
-    method: "UPDATE",
+    method: "PUT",
     path: buildRoutePath("/tasks/:id"),
     handler: async (req, res) => {
       const taskID = req.params.id;
       const taskDataToUpdate = req.body;
 
-      const IDTaskUpdated = database.insert(taskID, taskDataToUpdate);
+      const IDTaskUpdated = database.update(taskID, taskDataToUpdate);
 
       const isTaskUpdated = IDTaskUpdated ? true : false;
       const statusCode = isTaskUpdated ? 204 : 400;

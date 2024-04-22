@@ -26,18 +26,6 @@ export class Database {
     return tasksDatabase;
   }
 
-  insert(task = { title, description, completed_at, created_at, updated_at }) {
-    const taskID = randomUUID();
-
-    task = { ...task, id: taskID };
-
-    this.#database.push(task);
-
-    this.#persist();
-
-    return taskID;
-  }
-
   delete(taskID) {
     if (!taskID) {
       return false;
@@ -50,6 +38,49 @@ export class Database {
     });
 
     this.#database.splice(taskIndexToBeDeleted, 1);
+    this.#persist();
+
+    return true;
+  }
+
+  insert({ title, description, completed_at, created_at, updated_at }) {
+    const taskID = randomUUID();
+    const task = { title, description, completed_at, created_at, updated_at };
+
+    task = { ...task, id: taskID };
+
+    this.#database.push(task);
+
+    this.#persist();
+
+    return taskID;
+  }
+
+  update(taskID, { title, description, completed_at, created_at, updated_at }) {
+    if (!taskID) {
+      return false;
+    }
+
+    const newDataTask = {
+      title,
+      description,
+      completed_at,
+      created_at,
+      updated_at,
+    };
+
+    const taskIndexToBeUptaded = this.#database.findIndex((task, index) => {
+      if (task.id === taskID) {
+        return index;
+      }
+    });
+
+    const actualDataTask = this.#database[taskIndexToBeUptaded];
+    this.#database[taskIndexToBeUptaded] = {
+      ...actualDataTask,
+      ...newDataTask,
+    };
+
     this.#persist();
 
     return true;
