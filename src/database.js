@@ -49,7 +49,7 @@ export class Database {
     const taskID = randomUUID();
     const task = { title, description, completed_at, created_at, updated_at };
 
-    task = { ...task, id: taskID };
+    task = { ...task, id: taskID, created_at: formatDate(new Date()) };
 
     this.#database.push(task);
 
@@ -66,6 +66,8 @@ export class Database {
     const taskIndexToBeUptaded = this.#database.findIndex(
       (task) => task.id === taskID
     );
+
+    updated_at = formatDate(new Date());
 
     const actualDataTask = this.#database[taskIndexToBeUptaded];
     const updatedDataTask = {
