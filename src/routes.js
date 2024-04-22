@@ -8,7 +8,6 @@ export const routes = [
     method: "GET",
     path: buildRoutePath("/tasks"),
     handler: async (req, res) => {
-      const database = new Database();
       const tasksData = database.list();
 
       res.writeHead(200).end(JSON.stringify(tasksData));
@@ -24,6 +23,24 @@ export const routes = [
       const IDTaskCreated = database.insert(taskToCreate);
 
       res.writeHead(201).end(JSON.stringify(IDTaskCreated));
+    },
+  },
+
+  {
+    method: "UPDATE",
+    path: buildRoutePath("/tasks/:id"),
+    handler: async (req, res) => {
+      const taskID = req.params.id;
+      const taskDataToUpdate = req.body;
+
+      const IDTaskUpdated = database.insert(taskID, taskDataToUpdate);
+
+      const isTaskUpdated = IDTaskUpdated ? true : false;
+      const statusCode = isTaskUpdated ? 204 : 400;
+
+      res
+        .writeHead(statusCode)
+        .end(IDTaskUpdated ? JSON.stringify(IDTaskUpdated) : null);
     },
   },
 
